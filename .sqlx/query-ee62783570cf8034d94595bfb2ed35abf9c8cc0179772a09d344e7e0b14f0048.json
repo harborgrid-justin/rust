@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        UPDATE cases \n        SET title = COALESCE(?1, title),\n            description = COALESCE(?2, description),\n            status = COALESCE(?3, status),\n            priority = COALESCE(?4, priority),\n            assigned_to = COALESCE(?5, assigned_to),\n            due_date = COALESCE(?6, due_date),\n            updated_at = ?7\n        WHERE id = ?8\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 8
+    },
+    "nullable": []
+  },
+  "hash": "ee62783570cf8034d94595bfb2ed35abf9c8cc0179772a09d344e7e0b14f0048"
+}

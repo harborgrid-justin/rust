@@ -1,0 +1,57 @@
+[package]
+name = "enterprise-doccase-platform"
+version = "0.1.0"
+edition = "2021"
+authors = ["Harbor Grid <info@harborgrid.com>"]
+description = "Enterprise grade document and case management platform"
+license = "Apache-2.0"
+repository = "https://github.com/harborgrid-justin/rust"
+readme = "README.md"
+
+[dependencies]
+# Web framework
+axum = { version = "0.7", features = ["macros"] }
+tokio = { version = "1.0", features = ["full"] }
+tower = "0.4"
+tower-http = { version = "0.5", features = ["cors", "trace"] }
+
+# Database
+sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "sqlite", "postgres", "uuid", "chrono", "migrate"] }
+uuid = { version = "1.0", features = ["v4", "serde"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Date/Time
+chrono = { version = "0.4", features = ["serde"] }
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Configuration
+config = "0.14"
+
+# Authentication
+jsonwebtoken = "9.0"
+bcrypt = "0.15"
+
+# File handling
+mime = "0.3"
+mime_guess = "2.0"
+
+# Validation
+validator = { version = "0.16", features = ["derive"] }
+
+[dev-dependencies]
+tokio-test = "0.4"
+tempfile = "3.0"
+
+[[bin]]
+name = "server"
+path = "src/main.rs"
