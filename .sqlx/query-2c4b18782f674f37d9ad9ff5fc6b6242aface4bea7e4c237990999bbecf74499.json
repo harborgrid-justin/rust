@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "\n        SELECT d.* FROM documents d\n        INNER JOIN case_documents cd ON d.id = cd.document_id\n        WHERE cd.case_id = ?1\n        ORDER BY cd.added_at DESC\n        ",
+  "query": "SELECT id, title, description, file_path, file_name, file_size, mime_type, status, version, tags, created_by, created_at, updated_at FROM documents ORDER BY created_at DESC LIMIT ?1 OFFSET ?2",
   "describe": {
     "columns": [
       {
@@ -70,7 +70,7 @@
       }
     ],
     "parameters": {
-      "Right": 1
+      "Right": 2
     },
     "nullable": [
       true,
@@ -88,5 +88,5 @@
       false
     ]
   },
-  "hash": "c5f8ae64691706e8cbfe6d507a475ea8a0ad84f7473716d21463c23cd63a0cfa"
+  "hash": "2c4b18782f674f37d9ad9ff5fc6b6242aface4bea7e4c237990999bbecf74499"
 }

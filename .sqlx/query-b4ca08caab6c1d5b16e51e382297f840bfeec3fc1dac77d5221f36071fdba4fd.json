@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "SELECT * FROM users WHERE email = ?1 LIMIT 1",
+  "query": "SELECT id, title, description, status, priority, assigned_to, created_by, due_date, closed_at, created_at, updated_at FROM cases WHERE id = ?1 LIMIT 1",
   "describe": {
     "columns": [
       {
@@ -9,43 +9,53 @@
         "type_info": "Text"
       },
       {
-        "name": "email",
+        "name": "title",
         "ordinal": 1,
         "type_info": "Text"
       },
       {
-        "name": "username",
+        "name": "description",
         "ordinal": 2,
         "type_info": "Text"
       },
       {
-        "name": "password_hash",
+        "name": "status",
         "ordinal": 3,
         "type_info": "Text"
       },
       {
-        "name": "full_name",
+        "name": "priority",
         "ordinal": 4,
         "type_info": "Text"
       },
       {
-        "name": "role",
+        "name": "assigned_to",
         "ordinal": 5,
         "type_info": "Text"
       },
       {
-        "name": "is_active",
+        "name": "created_by",
         "ordinal": 6,
-        "type_info": "Bool"
+        "type_info": "Text"
       },
       {
-        "name": "created_at",
+        "name": "due_date",
         "ordinal": 7,
         "type_info": "Text"
       },
       {
-        "name": "updated_at",
+        "name": "closed_at",
         "ordinal": 8,
+        "type_info": "Text"
+      },
+      {
+        "name": "created_at",
+        "ordinal": 9,
+        "type_info": "Text"
+      },
+      {
+        "name": "updated_at",
+        "ordinal": 10,
         "type_info": "Text"
       }
     ],
@@ -55,14 +65,16 @@
     "nullable": [
       true,
       false,
+      true,
       false,
       false,
       true,
       false,
-      false,
+      true,
+      true,
       false,
       false
     ]
   },
-  "hash": "afd7188e4f52138df1f2301bedd9cf78ab206d36f92cf47f4898ab79db46f5fb"
+  "hash": "b4ca08caab6c1d5b16e51e382297f840bfeec3fc1dac77d5221f36071fdba4fd"
 }

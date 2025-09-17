@@ -71,15 +71,29 @@ pub async fn create_case(
 }
 
 pub async fn get_case(db: &SqlitePool, id: &str) -> Result<Option<Case>> {
-    let case = sqlx::query_as!(
-        Case,
-        "SELECT * FROM cases WHERE id = ?1 LIMIT 1",
+    let row = sqlx::query!(
+        "SELECT id, title, description, status, priority, assigned_to, created_by, due_date, closed_at, created_at, updated_at FROM cases WHERE id = ?1 LIMIT 1",
         id
     )
     .fetch_optional(db)
     .await?;
 
-    Ok(case)
+    match row {
+        Some(row) => Ok(Some(Case {
+            id: row.id,
+            title: row.title,
+            description: row.description,
+            status: row.status,
+            priority: row.priority,
+            assigned_to: row.assigned_to,
+            created_by: row.created_by,
+            due_date: row.due_date,
+            closed_at: row.closed_at,
+            created_at: row.created_at,
+            updated_at: row.updated_at,
+        })),
+        None => Ok(None),
+    }
 }
 
 pub async fn list_cases(
@@ -89,47 +103,57 @@ pub async fn list_cases(
     limit: i32,
     offset: i32,
 ) -> Result<Vec<Case>> {
-    let cases = match (status, assigned_to) {
+    let rows = match (status, assigned_to) {
         (Some(status), Some(assigned_to)) => {
-            sqlx::query_as!(
-                Case,
-                "SELECT * FROM cases WHERE status = ?1 AND assigned_to = ?2 
-                 ORDER BY created_at DESC LIMIT ?3 OFFSET ?4",
+            sqlx::query!(
+                "SELECT id, title, description, status, priority, assigned_to, created_by, due_date, closed_at, created_at, updated_at FROM cases WHERE status = ?1 AND assigned_to = ?2 ORDER BY created_at DESC LIMIT ?3 OFFSET ?4",
                 status, assigned_to, limit, offset
             )
             .fetch_all(db)
             .await?
         }
         (Some(status), None) => {
-            sqlx::query_as!(
-                Case,
-                "SELECT * FROM cases WHERE status = ?1 
-                 ORDER BY created_at DESC LIMIT ?2 OFFSET ?3",
+            sqlx::query!(
+                "SELECT id, title, description, status, priority, assigned_to, created_by, due_date, closed_at, created_at, updated_at FROM cases WHERE status = ?1 ORDER BY created_at DESC LIMIT ?2 OFFSET ?3",
                 status, limit, offset
             )
             .fetch_all(db)
             .await?
         }
         (None, Some(assigned_to)) => {
-            sqlx::query_as!(
-                Case,
-                "SELECT * FROM cases WHERE assigned_to = ?1 
-                 ORDER BY created_at DESC LIMIT ?2 OFFSET ?3",
+            sqlx::query!(
+                "SELECT id, title, description, status, priority, assigned_to, created_by, due_date, closed_at, created_at, updated_at FROM cases WHERE assigned_to = ?1 ORDER BY created_at DESC LIMIT ?2 OFFSET ?3",
                 assigned_to, limit, offset
             )
             .fetch_all(db)
             .await?
         }
         (None, None) => {
-            sqlx::query_as!(
-                Case,
-                "SELECT * FROM cases ORDER BY created_at DESC LIMIT ?1 OFFSET ?2",
+            sqlx::query!(
+                "SELECT id, title, description, status, priority, assigned_to, created_by, due_date, closed_at, created_at, updated_at FROM cases ORDER BY created_at DESC LIMIT ?1 OFFSET ?2",
                 limit, offset
             )
             .fetch_all(db)
             .await?
         }
     };
+
+    let cases = rows
+        .into_iter()
+        .map(|row| Case {
+            id: row.id,
+            title: row.title,
+            description: row.description,
+            status: row.status,
+            priority: row.priority,
+            assigned_to: row.assigned_to,
+            created_by: row.created_by,
+            due_date: row.due_date,
+            closed_at: row.closed_at,
+            created_at: row.created_at,
+            updated_at: row.updated_at,
+        })
+        .collect();
 
     Ok(cases)
 }
@@ -148,8 +172,8 @@ pub async fn update_case(
         None => return Ok(None),
     };
 
-    let status_str = request.status.map(String::from);
-    let priority_str = request.priority.map(String::from);
+    let status_str = request.status.as_ref().map(|s| String::from(s.clone()));
+    let priority_str = request.priority.as_ref().map(|p| String::from(p.clone()));
 
     // Update the case
     sqlx::query!(
@@ -219,10 +243,11 @@ pub async fn update_case(
 }
 
 pub async fn get_case_documents(db: &SqlitePool, case_id: &str) -> Result<Vec<Document>> {
-    let documents = sqlx::query_as!(
-        Document,
+    let rows = sqlx::query!(
         r#"
-        SELECT d.* FROM documents d
+        SELECT d.id, d.title, d.description, d.file_path, d.file_name, d.file_size, 
+               d.mime_type, d.status, d.version, d.tags, d.created_by, d.created_at, d.updated_at
+        FROM documents d
         INNER JOIN case_documents cd ON d.id = cd.document_id
         WHERE cd.case_id = ?1
         ORDER BY cd.added_at DESC
@@ -231,6 +256,25 @@ pub async fn get_case_documents(db: &SqlitePool, case_id: &str) -> Result<Vec<Do
     )
     .fetch_all(db)
     .await?;
+
+    let documents = rows
+        .into_iter()
+        .map(|row| Document {
+            id: row.id,
+            title: row.title,
+            description: row.description,
+            file_path: row.file_path,
+            file_name: row.file_name,
+            file_size: row.file_size,
+            mime_type: row.mime_type,
+            status: row.status,
+            version: row.version as i32,
+            tags: row.tags,
+            created_by: row.created_by,
+            created_at: row.created_at,
+            updated_at: row.updated_at,
+        })
+        .collect();
 
     Ok(documents)
 }

@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "SELECT * FROM documents ORDER BY created_at DESC LIMIT ?1 OFFSET ?2",
+  "query": "SELECT id, title, description, status, priority, assigned_to, created_by, due_date, closed_at, created_at, updated_at FROM cases WHERE assigned_to = ?1 ORDER BY created_at DESC LIMIT ?2 OFFSET ?3",
   "describe": {
     "columns": [
       {
@@ -19,74 +19,62 @@
         "type_info": "Text"
       },
       {
-        "name": "file_path",
+        "name": "status",
         "ordinal": 3,
         "type_info": "Text"
       },
       {
-        "name": "file_name",
+        "name": "priority",
         "ordinal": 4,
         "type_info": "Text"
       },
       {
-        "name": "file_size",
+        "name": "assigned_to",
         "ordinal": 5,
-        "type_info": "Integer"
-      },
-      {
-        "name": "mime_type",
-        "ordinal": 6,
-        "type_info": "Text"
-      },
-      {
-        "name": "status",
-        "ordinal": 7,
-        "type_info": "Text"
-      },
-      {
-        "name": "version",
-        "ordinal": 8,
-        "type_info": "Integer"
-      },
-      {
-        "name": "tags",
-        "ordinal": 9,
         "type_info": "Text"
       },
       {
         "name": "created_by",
-        "ordinal": 10,
+        "ordinal": 6,
+        "type_info": "Text"
+      },
+      {
+        "name": "due_date",
+        "ordinal": 7,
+        "type_info": "Text"
+      },
+      {
+        "name": "closed_at",
+        "ordinal": 8,
         "type_info": "Text"
       },
       {
         "name": "created_at",
-        "ordinal": 11,
+        "ordinal": 9,
         "type_info": "Text"
       },
       {
         "name": "updated_at",
-        "ordinal": 12,
+        "ordinal": 10,
         "type_info": "Text"
       }
     ],
     "parameters": {
-      "Right": 2
+      "Right": 3
     },
     "nullable": [
       true,
       false,
       true,
-      true,
-      true,
-      true,
-      true,
       false,
       false,
       true,
       false,
+      true,
+      true,
       false,
       false
     ]
   },
-  "hash": "b09b4345b3175d8e2ef60e949a5295ebd536bec18edfd3fa851d77b22c24f5e6"
+  "hash": "1f14016d04a47e131577778687c8d318b28ecf687c84778ced911374619f367e"
 }

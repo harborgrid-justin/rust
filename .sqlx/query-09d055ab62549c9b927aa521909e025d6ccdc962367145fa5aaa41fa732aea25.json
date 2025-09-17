@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "SELECT * FROM users WHERE id = ?1 LIMIT 1",
+  "query": "SELECT id, email, username, password_hash, full_name, role, is_active, created_at, updated_at FROM users WHERE id = ?1 LIMIT 1",
   "describe": {
     "columns": [
       {
@@ -64,5 +64,5 @@
       false
     ]
   },
-  "hash": "bf188c0a444cd491583ea91397395de9105ee5da7d852ec8f91519e366e27cdc"
+  "hash": "09d055ab62549c9b927aa521909e025d6ccdc962367145fa5aaa41fa732aea25"
 }

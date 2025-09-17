@@ -47,15 +47,31 @@ pub async fn create_document(
 }
 
 pub async fn get_document(db: &SqlitePool, id: &str) -> Result<Option<Document>> {
-    let document = sqlx::query_as!(
-        Document,
-        "SELECT * FROM documents WHERE id = ?1 LIMIT 1",
+    let row = sqlx::query!(
+        "SELECT id, title, description, file_path, file_name, file_size, mime_type, status, version, tags, created_by, created_at, updated_at FROM documents WHERE id = ?1 LIMIT 1",
         id
     )
     .fetch_optional(db)
     .await?;
 
-    Ok(document)
+    match row {
+        Some(row) => Ok(Some(Document {
+            id: row.id,
+            title: row.title,
+            description: row.description,
+            file_path: row.file_path,
+            file_name: row.file_name,
+            file_size: row.file_size,
+            mime_type: row.mime_type,
+            status: row.status,
+            version: row.version as i32,
+            tags: row.tags,
+            created_by: row.created_by,
+            created_at: row.created_at,
+            updated_at: row.updated_at,
+        })),
+        None => Ok(None),
+    }
 }
 
 pub async fn list_documents(
@@ -65,47 +81,59 @@ pub async fn list_documents(
     limit: i32,
     offset: i32,
 ) -> Result<Vec<Document>> {
-    let documents = match (status, created_by) {
+    let rows = match (status, created_by) {
         (Some(status), Some(created_by)) => {
-            sqlx::query_as!(
-                Document,
-                "SELECT * FROM documents WHERE status = ?1 AND created_by = ?2 
-                 ORDER BY created_at DESC LIMIT ?3 OFFSET ?4",
+            sqlx::query!(
+                "SELECT id, title, description, file_path, file_name, file_size, mime_type, status, version, tags, created_by, created_at, updated_at FROM documents WHERE status = ?1 AND created_by = ?2 ORDER BY created_at DESC LIMIT ?3 OFFSET ?4",
                 status, created_by, limit, offset
             )
             .fetch_all(db)
             .await?
         }
         (Some(status), None) => {
-            sqlx::query_as!(
-                Document,
-                "SELECT * FROM documents WHERE status = ?1 
-                 ORDER BY created_at DESC LIMIT ?2 OFFSET ?3",
+            sqlx::query!(
+                "SELECT id, title, description, file_path, file_name, file_size, mime_type, status, version, tags, created_by, created_at, updated_at FROM documents WHERE status = ?1 ORDER BY created_at DESC LIMIT ?2 OFFSET ?3",
                 status, limit, offset
             )
             .fetch_all(db)
             .await?
         }
         (None, Some(created_by)) => {
-            sqlx::query_as!(
-                Document,
-                "SELECT * FROM documents WHERE created_by = ?1 
-                 ORDER BY created_at DESC LIMIT ?2 OFFSET ?3",
+            sqlx::query!(
+                "SELECT id, title, description, file_path, file_name, file_size, mime_type, status, version, tags, created_by, created_at, updated_at FROM documents WHERE created_by = ?1 ORDER BY created_at DESC LIMIT ?2 OFFSET ?3",
                 created_by, limit, offset
             )
             .fetch_all(db)
             .await?
         }
         (None, None) => {
-            sqlx::query_as!(
-                Document,
-                "SELECT * FROM documents ORDER BY created_at DESC LIMIT ?1 OFFSET ?2",
+            sqlx::query!(
+                "SELECT id, title, description, file_path, file_name, file_size, mime_type, status, version, tags, created_by, created_at, updated_at FROM documents ORDER BY created_at DESC LIMIT ?1 OFFSET ?2",
                 limit, offset
             )
             .fetch_all(db)
             .await?
         }
     };
+
+    let documents = rows
+        .into_iter()
+        .map(|row| Document {
+            id: row.id,
+            title: row.title,
+            description: row.description,
+            file_path: row.file_path,
+            file_name: row.file_name,
+            file_size: row.file_size,
+            mime_type: row.mime_type,
+            status: row.status,
+            version: row.version as i32,
+            tags: row.tags,
+            created_by: row.created_by,
+            created_at: row.created_at,
+            updated_at: row.updated_at,
+        })
+        .collect();
 
     Ok(documents)
 }

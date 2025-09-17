@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "SELECT * FROM cases ORDER BY created_at DESC LIMIT ?1 OFFSET ?2",
+  "query": "SELECT id, title, description, status, priority, assigned_to, created_by, due_date, closed_at, created_at, updated_at FROM cases ORDER BY created_at DESC LIMIT ?1 OFFSET ?2",
   "describe": {
     "columns": [
       {
@@ -76,5 +76,5 @@
       false
     ]
   },
-  "hash": "9383fdd94f10e3b62dfdc3d75d136fcd6e1369bb5ff6d7f9eb6b9fc013ae7317"
+  "hash": "0bd594bfc683053d476583d88d8a6d9c3efc28417c46e804f3a3357d5cc60383"
 }

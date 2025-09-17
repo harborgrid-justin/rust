@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "SELECT * FROM documents WHERE created_by = ?1 \n                 ORDER BY created_at DESC LIMIT ?2 OFFSET ?3",
+  "query": "SELECT id, title, description, file_path, file_name, file_size, mime_type, status, version, tags, created_by, created_at, updated_at FROM documents WHERE id = ?1 LIMIT 1",
   "describe": {
     "columns": [
       {
@@ -70,7 +70,7 @@
       }
     ],
     "parameters": {
-      "Right": 3
+      "Right": 1
     },
     "nullable": [
       true,
@@ -88,5 +88,5 @@
       false
     ]
   },
-  "hash": "f73f3373e738266f979278da84fc022d23254d4e351b2b5f16a13b989aee6554"
+  "hash": "ecb230280431d2663778ddb9329ff8e43d9de7f01eb8336968095a72cdef4ec1"
 }

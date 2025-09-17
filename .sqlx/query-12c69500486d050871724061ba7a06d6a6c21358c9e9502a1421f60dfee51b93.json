@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "SELECT * FROM cases WHERE assigned_to = ?1 \n                 ORDER BY created_at DESC LIMIT ?2 OFFSET ?3",
+  "query": "SELECT id, title, description, status, priority, assigned_to, created_by, due_date, closed_at, created_at, updated_at FROM cases WHERE status = ?1 AND assigned_to = ?2 ORDER BY created_at DESC LIMIT ?3 OFFSET ?4",
   "describe": {
     "columns": [
       {
@@ -60,7 +60,7 @@
       }
     ],
     "parameters": {
-      "Right": 3
+      "Right": 4
     },
     "nullable": [
       true,
@@ -76,5 +76,5 @@
       false
     ]
   },
-  "hash": "ec2ce8cd75f900bbe5c80908bcec7f3621f51c048300b378b46e08238808757b"
+  "hash": "12c69500486d050871724061ba7a06d6a6c21358c9e9502a1421f60dfee51b93"
 }

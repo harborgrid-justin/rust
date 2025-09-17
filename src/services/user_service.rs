@@ -46,15 +46,15 @@ pub async fn get_user_by_email(db: &SqlitePool, email: &str) -> Result<Option<Us
 
     match row {
         Some(row) => Ok(Some(User {
-            id: row.id,
-            email: row.email,
-            username: row.username,
-            password_hash: row.password_hash,
+            id: row.id.unwrap_or_default(),
+            email: row.email.unwrap_or_default(),
+            username: row.username.unwrap_or_default(),
+            password_hash: row.password_hash.unwrap_or_default(),
             full_name: row.full_name,
-            role: row.role,
-            is_active: row.is_active != 0,
-            created_at: row.created_at,
-            updated_at: row.updated_at,
+            role: row.role.unwrap_or_default(),
+            is_active: row.is_active.unwrap_or(0) != 0,
+            created_at: row.created_at.unwrap_or_default(),
+            updated_at: row.updated_at.unwrap_or_default(),
         })),
         None => Ok(None),
     }
@@ -70,15 +70,15 @@ pub async fn get_user_by_id(db: &SqlitePool, id: &str) -> Result<Option<User>> {
 
     match row {
         Some(row) => Ok(Some(User {
-            id: row.id,
-            email: row.email,
-            username: row.username,
-            password_hash: row.password_hash,
+            id: row.id.unwrap_or_default(),
+            email: row.email.unwrap_or_default(),
+            username: row.username.unwrap_or_default(),
+            password_hash: row.password_hash.unwrap_or_default(),
             full_name: row.full_name,
-            role: row.role,
-            is_active: row.is_active != 0,
-            created_at: row.created_at,
-            updated_at: row.updated_at,
+            role: row.role.unwrap_or_default(),
+            is_active: row.is_active.unwrap_or(0) != 0,
+            created_at: row.created_at.unwrap_or_default(),
+            updated_at: row.updated_at.unwrap_or_default(),
         })),
         None => Ok(None),
     }
