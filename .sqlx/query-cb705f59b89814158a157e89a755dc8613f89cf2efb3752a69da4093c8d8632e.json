@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO case_history (id, case_id, action, details, performed_by, performed_at)\n             VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 6
+    },
+    "nullable": []
+  },
+  "hash": "cb705f59b89814158a157e89a755dc8613f89cf2efb3752a69da4093c8d8632e"
+}

@@ -1,0 +1,92 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT id, title, description, file_path, file_name, file_size, mime_type, status, version, tags, created_by, created_at, updated_at FROM documents ORDER BY created_at DESC LIMIT ?1 OFFSET ?2",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "title",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "description",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "file_path",
+        "ordinal": 3,
+        "type_info": "Text"
+      },
+      {
+        "name": "file_name",
+        "ordinal": 4,
+        "type_info": "Text"
+      },
+      {
+        "name": "file_size",
+        "ordinal": 5,
+        "type_info": "Integer"
+      },
+      {
+        "name": "mime_type",
+        "ordinal": 6,
+        "type_info": "Text"
+      },
+      {
+        "name": "status",
+        "ordinal": 7,
+        "type_info": "Text"
+      },
+      {
+        "name": "version",
+        "ordinal": 8,
+        "type_info": "Integer"
+      },
+      {
+        "name": "tags",
+        "ordinal": 9,
+        "type_info": "Text"
+      },
+      {
+        "name": "created_by",
+        "ordinal": 10,
+        "type_info": "Text"
+      },
+      {
+        "name": "created_at",
+        "ordinal": 11,
+        "type_info": "Text"
+      },
+      {
+        "name": "updated_at",
+        "ordinal": 12,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": [
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "2c4b18782f674f37d9ad9ff5fc6b6242aface4bea7e4c237990999bbecf74499"
+}

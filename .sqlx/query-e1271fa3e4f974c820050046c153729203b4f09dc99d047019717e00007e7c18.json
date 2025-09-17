@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        INSERT INTO cases (id, title, description, status, priority, assigned_to, \n                          created_by, due_date, closed_at, created_at, updated_at)\n        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 11
+    },
+    "nullable": []
+  },
+  "hash": "e1271fa3e4f974c820050046c153729203b4f09dc99d047019717e00007e7c18"
+}
