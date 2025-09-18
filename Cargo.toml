@@ -53,3 +53,11 @@ path = "src/main.rs"
 [[bin]]
 name = "extended-server"
 path = "src/main_extended.rs"
+
+[[bin]]
+name = "final-server"
+path = "src/main_final.rs"
+
+[[bin]]
+name = "demo-server"
+path = "src/main_demo.rs"

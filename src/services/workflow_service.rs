@@ -143,8 +143,8 @@ pub async fn create_case_workflow_from_template(
     .await?;
 
     if let Some(template) = template {
-        if let Some(workflow_json) = template.workflow_steps {
-            let workflow_steps: Vec<WorkflowStep> = serde_json::from_str(&workflow_json)?;
+        if let Some(workflow_json) = &template.workflow_steps {
+            if let Ok(workflow_steps) = serde_json::from_str::<Vec<WorkflowStep>>(workflow_json) {
             let mut created_workflows = Vec::new();
 
             for step in workflow_steps {
@@ -182,6 +182,7 @@ pub async fn create_case_workflow_from_template(
 
             info!("Created {} workflow steps for case {}", created_workflows.len(), case_id);
             return Ok(created_workflows);
+            }
         }
     }
 
