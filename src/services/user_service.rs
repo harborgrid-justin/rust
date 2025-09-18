@@ -37,49 +37,25 @@ pub async fn create_user(
 }
 
 pub async fn get_user_by_email(db: &SqlitePool, email: &str) -> Result<Option<User>> {
-    let row = sqlx::query!(
+    let row = sqlx::query_as!(
+        User,
         "SELECT id, email, username, password_hash, full_name, role, is_active, created_at, updated_at FROM users WHERE email = ?1 LIMIT 1",
         email
     )
     .fetch_optional(db)
     .await?;
 
-    match row {
-        Some(row) => Ok(Some(User {
-            id: row.id.unwrap_or_default(),
-            email: row.email.unwrap_or_default(),
-            username: row.username.unwrap_or_default(),
-            password_hash: row.password_hash.unwrap_or_default(),
-            full_name: row.full_name,
-            role: row.role.unwrap_or_default(),
-            is_active: row.is_active.unwrap_or(0) != 0,
-            created_at: row.created_at.unwrap_or_default(),
-            updated_at: row.updated_at.unwrap_or_default(),
-        })),
-        None => Ok(None),
-    }
+    Ok(row)
 }
 
 pub async fn get_user_by_id(db: &SqlitePool, id: &str) -> Result<Option<User>> {
-    let row = sqlx::query!(
+    let row = sqlx::query_as!(
+        User,
         "SELECT id, email, username, password_hash, full_name, role, is_active, created_at, updated_at FROM users WHERE id = ?1 LIMIT 1",
         id
     )
     .fetch_optional(db)
     .await?;
 
-    match row {
-        Some(row) => Ok(Some(User {
-            id: row.id.unwrap_or_default(),
-            email: row.email.unwrap_or_default(),
-            username: row.username.unwrap_or_default(),
-            password_hash: row.password_hash.unwrap_or_default(),
-            full_name: row.full_name,
-            role: row.role.unwrap_or_default(),
-            is_active: row.is_active.unwrap_or(0) != 0,
-            created_at: row.created_at.unwrap_or_default(),
-            updated_at: row.updated_at.unwrap_or_default(),
-        })),
-        None => Ok(None),
-    }
+    Ok(row)
 }
