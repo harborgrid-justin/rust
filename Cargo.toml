@@ -15,12 +15,25 @@ tokio = { version = "1.0", features = ["full"] }
 tower = "0.4"
 tower-http = { version = "0.5", features = ["cors", "trace"] }
 
+# Database
+sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "sqlite", "chrono", "uuid", "migrate"] }
+
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
+# Validation
+validator = { version = "0.18", features = ["derive"] }
+
+# Authentication and encryption
+bcrypt = "0.15"
+jsonwebtoken = "9.3"
+
 # Date/Time
 chrono = { version = "0.4", features = ["serde"] }
+
+# UUID generation
+uuid = { version = "1.0", features = ["v4", "serde"] }
 
 # Error handling
 anyhow = "1.0"
@@ -36,3 +49,15 @@ tempfile = "3.0"
 [[bin]]
 name = "server"
 path = "src/main.rs"
+
+[[bin]]
+name = "extended-server"
+path = "src/main_extended.rs"
+
+[[bin]]
+name = "final-server"
+path = "src/main_final.rs"
+
+[[bin]]
+name = "demo-server"
+path = "src/main_demo.rs"

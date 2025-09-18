@@ -1,28 +1,20 @@
 use anyhow::Result;
-use chrono::Utc;
 use sqlx::SqlitePool;
 use tracing::info;
 
-use crate::models::{Document, CreateDocumentRequest, UpdateDocumentRequest, DocumentStatus};
+use crate::models::{Document, DocumentStatus, CreateDocumentRequest, DocumentResponse, UpdateDocumentRequest};
 
 pub async fn create_document(
     db: &SqlitePool,
     request: CreateDocumentRequest,
     created_by: String,
 ) -> Result<Document> {
-    let document = Document::new(
-        request.title,
-        request.description,
-        created_by,
-        request.tags,
-    );
-
-    let tags_json = document.tags.as_deref();
+    let document = Document::new(request.title, request.description, created_by, request.tags);
 
     sqlx::query!(
         r#"
-        INSERT INTO documents (id, title, description, file_path, file_name, file_size, 
-                             mime_type, status, version, tags, created_by, created_at, updated_at)
+        INSERT INTO documents (id, title, description, file_path, file_name, file_size, mime_type, 
+                             status, version, tags, created_by, created_at, updated_at)
         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)
         "#,
         document.id,
@@ -34,7 +26,7 @@ pub async fn create_document(
         document.mime_type,
         document.status,
         document.version,
-        tags_json,
+        document.tags,
         document.created_by,
         document.created_at,
         document.updated_at
@@ -42,36 +34,20 @@ pub async fn create_document(
     .execute(db)
     .await?;
 
-    info!("Created document: {}", document.id);
+    info!("Created document: {} ({})", document.title, document.id);
     Ok(document)
 }
 
 pub async fn get_document(db: &SqlitePool, id: &str) -> Result<Option<Document>> {
-    let row = sqlx::query!(
-        "SELECT id, title, description, file_path, file_name, file_size, mime_type, status, version, tags, created_by, created_at, updated_at FROM documents WHERE id = ?1 LIMIT 1",
+    let document = sqlx::query_as!(
+        Document,
+        "SELECT id, title, description, file_path, file_name, file_size, mime_type, status, version, tags, created_by, created_at, updated_at FROM documents WHERE id = ?1",
         id
     )
     .fetch_optional(db)
     .await?;
 
-    match row {
-        Some(row) => Ok(Some(Document {
-            id: row.id,
-            title: row.title,
-            description: row.description,
-            file_path: row.file_path,
-            file_name: row.file_name,
-            file_size: row.file_size,
-            mime_type: row.mime_type,
-            status: row.status,
-            version: row.version as i32,
-            tags: row.tags,
-            created_by: row.created_by,
-            created_at: row.created_at,
-            updated_at: row.updated_at,
-        })),
-        None => Ok(None),
-    }
+    Ok(document)
 }
 
 pub async fn list_documents(
@@ -81,9 +57,10 @@ pub async fn list_documents(
     limit: i32,
     offset: i32,
 ) -> Result<Vec<Document>> {
-    let rows = match (status, created_by) {
+    let documents = match (status, created_by) {
         (Some(status), Some(created_by)) => {
-            sqlx::query!(
+            sqlx::query_as!(
+                Document,
                 "SELECT id, title, description, file_path, file_name, file_size, mime_type, status, version, tags, created_by, created_at, updated_at FROM documents WHERE status = ?1 AND created_by = ?2 ORDER BY created_at DESC LIMIT ?3 OFFSET ?4",
                 status, created_by, limit, offset
             )
@@ -91,7 +68,8 @@ pub async fn list_documents(
             .await?
         }
         (Some(status), None) => {
-            sqlx::query!(
+            sqlx::query_as!(
+                Document,
                 "SELECT id, title, description, file_path, file_name, file_size, mime_type, status, version, tags, created_by, created_at, updated_at FROM documents WHERE status = ?1 ORDER BY created_at DESC LIMIT ?2 OFFSET ?3",
                 status, limit, offset
             )
@@ -99,7 +77,8 @@ pub async fn list_documents(
             .await?
         }
         (None, Some(created_by)) => {
-            sqlx::query!(
+            sqlx::query_as!(
+                Document,
                 "SELECT id, title, description, file_path, file_name, file_size, mime_type, status, version, tags, created_by, created_at, updated_at FROM documents WHERE created_by = ?1 ORDER BY created_at DESC LIMIT ?2 OFFSET ?3",
                 created_by, limit, offset
             )
@@ -107,7 +86,8 @@ pub async fn list_documents(
             .await?
         }
         (None, None) => {
-            sqlx::query!(
+            sqlx::query_as!(
+                Document,
                 "SELECT id, title, description, file_path, file_name, file_size, mime_type, status, version, tags, created_by, created_at, updated_at FROM documents ORDER BY created_at DESC LIMIT ?1 OFFSET ?2",
                 limit, offset
             )
@@ -116,25 +96,6 @@ pub async fn list_documents(
         }
     };
 
-    let documents = rows
-        .into_iter()
-        .map(|row| Document {
-            id: row.id,
-            title: row.title,
-            description: row.description,
-            file_path: row.file_path,
-            file_name: row.file_name,
-            file_size: row.file_size,
-            mime_type: row.mime_type,
-            status: row.status,
-            version: row.version as i32,
-            tags: row.tags,
-            created_by: row.created_by,
-            created_at: row.created_at,
-            updated_at: row.updated_at,
-        })
-        .collect();
-
     Ok(documents)
 }
 
@@ -142,13 +103,12 @@ pub async fn update_document(
     db: &SqlitePool,
     id: &str,
     request: UpdateDocumentRequest,
+    updated_by: String,
 ) -> Result<Option<Document>> {
-    let updated_at = Utc::now().to_rfc3339();
-
-    // For simplicity, let's use a more straightforward approach
-    let tags_json = request.tags.as_ref().map(|t| serde_json::to_string(t).unwrap_or_default());
+    let now = chrono::Utc::now().to_rfc3339();
     let status_str = request.status.map(String::from);
-    
+    let tags_json = request.tags.map(|tags| serde_json::to_string(&tags).unwrap_or_default());
+
     sqlx::query!(
         r#"
         UPDATE documents 
@@ -163,12 +123,21 @@ pub async fn update_document(
         request.description,
         status_str,
         tags_json,
-        updated_at,
+        now,
         id
     )
     .execute(db)
     .await?;
 
-    info!("Updated document: {}", id);
+    // Return the updated document
     get_document(db, id).await
+}
+
+pub async fn delete_document(db: &SqlitePool, id: &str) -> Result<()> {
+    sqlx::query!("DELETE FROM documents WHERE id = ?1", id)
+        .execute(db)
+        .await?;
+
+    info!("Deleted document {}", id);
+    Ok(())
 }
