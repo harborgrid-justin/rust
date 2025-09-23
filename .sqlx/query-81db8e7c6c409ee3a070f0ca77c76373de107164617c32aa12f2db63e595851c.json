@@ -1,0 +1,56 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT id, case_id, field_name, field_type, field_value, created_at, updated_at\n        FROM case_custom_fields\n        WHERE case_id = ?1\n        ORDER BY field_name ASC\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "case_id",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "field_name",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "field_type",
+        "ordinal": 3,
+        "type_info": "Text"
+      },
+      {
+        "name": "field_value",
+        "ordinal": 4,
+        "type_info": "Text"
+      },
+      {
+        "name": "created_at",
+        "ordinal": 5,
+        "type_info": "Text"
+      },
+      {
+        "name": "updated_at",
+        "ordinal": 6,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      true,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false
+    ]
+  },
+  "hash": "81db8e7c6c409ee3a070f0ca77c76373de107164617c32aa12f2db63e595851c"
+}

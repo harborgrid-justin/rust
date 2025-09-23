@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        INSERT INTO notifications (id, user_id, title, message, notification_type, entity_type, entity_id, read_at, created_at)\n        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 9
+    },
+    "nullable": []
+  },
+  "hash": "0a059379145febec6f7ba3cca2ab9964fd5ffdd40952ad78439ae2f2a7770f75"
+}

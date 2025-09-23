@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "DELETE FROM team_members WHERE team_id = ?1 AND user_id = ?2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "2f628c5adab07b30dba40aa9b7ef90e2974aa5cb208053617951ac325c05d6b6"
+}

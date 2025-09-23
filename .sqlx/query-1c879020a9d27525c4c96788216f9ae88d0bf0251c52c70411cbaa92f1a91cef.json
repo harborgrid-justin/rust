@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        INSERT INTO case_custom_fields (id, case_id, field_name, field_type, field_value, created_at, updated_at)\n        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)\n        ON CONFLICT (case_id, field_name) \n        DO UPDATE SET field_value = ?5, updated_at = ?7\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 7
+    },
+    "nullable": []
+  },
+  "hash": "1c879020a9d27525c4c96788216f9ae88d0bf0251c52c70411cbaa92f1a91cef"
+}

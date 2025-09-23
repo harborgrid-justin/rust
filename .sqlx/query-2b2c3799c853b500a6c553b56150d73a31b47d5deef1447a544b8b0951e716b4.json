@@ -1,0 +1,26 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT DATE(created_at) as date, COUNT(*) as count\n        FROM documents \n        WHERE created_at >= datetime('now', '-' || ? || ' days')\n        GROUP BY DATE(created_at)\n        ORDER BY date\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "date",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "count",
+        "ordinal": 1,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      true,
+      false
+    ]
+  },
+  "hash": "2b2c3799c853b500a6c553b56150d73a31b47d5deef1447a544b8b0951e716b4"
+}

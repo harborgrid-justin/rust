@@ -37,6 +37,7 @@ uuid = { version = "1.0", features = ["v4", "serde"] }
 
 # Error handling
 anyhow = "1.0"
+thiserror = "1.0"
 
 # Logging
 tracing = "0.1"

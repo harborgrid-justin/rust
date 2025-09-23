@@ -1,0 +1,80 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT id, case_id, step_name, step_order, status, assigned_to, \n               completed_by, completed_at, notes, created_at, updated_at\n        FROM case_workflows\n        WHERE case_id = ?1\n        ORDER BY step_order ASC\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "case_id",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "step_name",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "step_order",
+        "ordinal": 3,
+        "type_info": "Integer"
+      },
+      {
+        "name": "status",
+        "ordinal": 4,
+        "type_info": "Text"
+      },
+      {
+        "name": "assigned_to",
+        "ordinal": 5,
+        "type_info": "Text"
+      },
+      {
+        "name": "completed_by",
+        "ordinal": 6,
+        "type_info": "Text"
+      },
+      {
+        "name": "completed_at",
+        "ordinal": 7,
+        "type_info": "Text"
+      },
+      {
+        "name": "notes",
+        "ordinal": 8,
+        "type_info": "Text"
+      },
+      {
+        "name": "created_at",
+        "ordinal": 9,
+        "type_info": "Text"
+      },
+      {
+        "name": "updated_at",
+        "ordinal": 10,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      true,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false
+    ]
+  },
+  "hash": "28cb5b08cf5cd8654ae29e0554aa27e65e877d12de6660be920a2f745d4c2615"
+}

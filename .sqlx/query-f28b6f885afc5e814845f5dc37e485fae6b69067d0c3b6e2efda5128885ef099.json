@@ -1,0 +1,38 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT u.id, u.username, u.full_name, COUNT(a.id) as activity_count\n        FROM users u\n        LEFT JOIN activities a ON u.id = a.user_id \n            AND a.created_at >= datetime('now', '-' || ? || ' days')\n        GROUP BY u.id, u.username, u.full_name\n        ORDER BY activity_count DESC\n        LIMIT 10\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "username",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "full_name",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "activity_count",
+        "ordinal": 3,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      true,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "f28b6f885afc5e814845f5dc37e485fae6b69067d0c3b6e2efda5128885ef099"
+}

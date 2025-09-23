@@ -1,0 +1,26 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT priority, COUNT(*) as count\n        FROM cases\n        GROUP BY priority\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "priority",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "count",
+        "ordinal": 1,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "a7b30b06ab75f9e2c5141908e154ef7643c25b466daa5f3a756b2f476b0a7a9c"
+}

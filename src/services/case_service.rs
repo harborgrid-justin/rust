@@ -90,38 +90,42 @@ pub async fn list_cases(
 ) -> Result<Vec<Case>> {
     let cases = match (status, assigned_to) {
         (Some(status), Some(assigned_to)) => {
-            sqlx::query_as!(
-                Case,
-                "SELECT id, title, description, status, priority, assigned_to, created_by, due_date, closed_at, created_at, updated_at FROM cases WHERE status = ?1 AND assigned_to = ?2 ORDER BY created_at DESC LIMIT ?3 OFFSET ?4",
-                status, assigned_to, limit, offset
+            sqlx::query_as::<_, Case>(
+                "SELECT id, title, description, status, priority, assigned_to, created_by, due_date, closed_at, created_at, updated_at FROM cases WHERE status = ?1 AND assigned_to = ?2 ORDER BY created_at DESC LIMIT ?3 OFFSET ?4"
             )
+            .bind(status)
+            .bind(assigned_to)
+            .bind(limit)
+            .bind(offset)
             .fetch_all(db)
             .await?
         }
         (Some(status), None) => {
-            sqlx::query_as!(
-                Case,
-                "SELECT id, title, description, status, priority, assigned_to, created_by, due_date, closed_at, created_at, updated_at FROM cases WHERE status = ?1 ORDER BY created_at DESC LIMIT ?2 OFFSET ?3",
-                status, limit, offset
+            sqlx::query_as::<_, Case>(
+                "SELECT id, title, description, status, priority, assigned_to, created_by, due_date, closed_at, created_at, updated_at FROM cases WHERE status = ?1 ORDER BY created_at DESC LIMIT ?2 OFFSET ?3"
             )
+            .bind(status)
+            .bind(limit)
+            .bind(offset)
             .fetch_all(db)
             .await?
         }
         (None, Some(assigned_to)) => {
-            sqlx::query_as!(
-                Case,
-                "SELECT id, title, description, status, priority, assigned_to, created_by, due_date, closed_at, created_at, updated_at FROM cases WHERE assigned_to = ?1 ORDER BY created_at DESC LIMIT ?2 OFFSET ?3",
-                assigned_to, limit, offset
+            sqlx::query_as::<_, Case>(
+                "SELECT id, title, description, status, priority, assigned_to, created_by, due_date, closed_at, created_at, updated_at FROM cases WHERE assigned_to = ?1 ORDER BY created_at DESC LIMIT ?2 OFFSET ?3"
             )
+            .bind(assigned_to)
+            .bind(limit)
+            .bind(offset)
             .fetch_all(db)
             .await?
         }
         (None, None) => {
-            sqlx::query_as!(
-                Case,
-                "SELECT id, title, description, status, priority, assigned_to, created_by, due_date, closed_at, created_at, updated_at FROM cases ORDER BY created_at DESC LIMIT ?1 OFFSET ?2",
-                limit, offset
+            sqlx::query_as::<_, Case>(
+                "SELECT id, title, description, status, priority, assigned_to, created_by, due_date, closed_at, created_at, updated_at FROM cases ORDER BY created_at DESC LIMIT ?1 OFFSET ?2"
             )
+            .bind(limit)
+            .bind(offset)
             .fetch_all(db)
             .await?
         }

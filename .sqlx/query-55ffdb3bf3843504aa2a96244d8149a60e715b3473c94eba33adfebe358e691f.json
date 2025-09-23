@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n                    INSERT INTO case_workflows (id, case_id, step_name, step_order, status, \n                                               assigned_to, completed_by, completed_at, notes, \n                                               created_at, updated_at)\n                    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)\n                    ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 11
+    },
+    "nullable": []
+  },
+  "hash": "55ffdb3bf3843504aa2a96244d8149a60e715b3473c94eba33adfebe358e691f"
+}

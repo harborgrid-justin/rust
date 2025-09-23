@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        INSERT INTO case_templates (id, name, description, default_priority, default_assignee, \n                                   workflow_steps, custom_fields, created_by, created_at, updated_at)\n        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 10
+    },
+    "nullable": []
+  },
+  "hash": "155f218ba9f27e3ab7108dcd2bb5a498036bf3ddba5506215c658b6dabd2cd15"
+}

@@ -1,0 +1,50 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT \n            (SELECT COUNT(*) FROM users) as user_count,\n            (SELECT COUNT(*) FROM documents) as document_count,\n            (SELECT COUNT(*) FROM cases) as case_count,\n            (SELECT COUNT(*) FROM teams) as team_count,\n            (SELECT COUNT(*) FROM notifications WHERE read_at IS NULL) as unread_notifications,\n            (SELECT COUNT(*) FROM activities WHERE created_at >= datetime('now', '-1 day')) as recent_activities\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "user_count",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "document_count",
+        "ordinal": 1,
+        "type_info": "Integer"
+      },
+      {
+        "name": "case_count",
+        "ordinal": 2,
+        "type_info": "Integer"
+      },
+      {
+        "name": "team_count",
+        "ordinal": 3,
+        "type_info": "Integer"
+      },
+      {
+        "name": "unread_notifications",
+        "ordinal": 4,
+        "type_info": "Integer"
+      },
+      {
+        "name": "recent_activities",
+        "ordinal": 5,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "91f66fd7c0d411843be34a1d9a91c841182e80f5197d145d2cc54f458e4b8529"
+}

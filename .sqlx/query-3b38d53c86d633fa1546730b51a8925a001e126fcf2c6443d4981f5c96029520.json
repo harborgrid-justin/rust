@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "SELECT id, title, description, file_path, file_name, file_size, mime_type, status, version, tags, created_by, created_at, updated_at FROM documents WHERE id = ?1 LIMIT 1",
+  "query": "\n        SELECT id, name, description, default_priority, default_assignee, \n               workflow_steps, custom_fields, created_by, created_at, updated_at\n        FROM case_templates\n        ORDER BY created_at DESC\n        LIMIT ?1 OFFSET ?2\n        ",
   "describe": {
     "columns": [
       {
@@ -9,7 +9,7 @@
         "type_info": "Text"
       },
       {
-        "name": "title",
+        "name": "name",
         "ordinal": 1,
         "type_info": "Text"
       },
@@ -19,74 +19,56 @@
         "type_info": "Text"
       },
       {
-        "name": "file_path",
+        "name": "default_priority",
         "ordinal": 3,
         "type_info": "Text"
       },
       {
-        "name": "file_name",
+        "name": "default_assignee",
         "ordinal": 4,
         "type_info": "Text"
       },
       {
-        "name": "file_size",
+        "name": "workflow_steps",
         "ordinal": 5,
-        "type_info": "Integer"
+        "type_info": "Text"
       },
       {
-        "name": "mime_type",
+        "name": "custom_fields",
         "ordinal": 6,
         "type_info": "Text"
       },
       {
-        "name": "status",
+        "name": "created_by",
         "ordinal": 7,
         "type_info": "Text"
       },
       {
-        "name": "version",
-        "ordinal": 8,
-        "type_info": "Integer"
-      },
-      {
-        "name": "tags",
-        "ordinal": 9,
-        "type_info": "Text"
-      },
-      {
-        "name": "created_by",
-        "ordinal": 10,
-        "type_info": "Text"
-      },
-      {
         "name": "created_at",
-        "ordinal": 11,
+        "ordinal": 8,
         "type_info": "Text"
       },
       {
         "name": "updated_at",
-        "ordinal": 12,
+        "ordinal": 9,
         "type_info": "Text"
       }
     ],
     "parameters": {
-      "Right": 1
+      "Right": 2
     },
     "nullable": [
       true,
       false,
       true,
-      true,
-      true,
-      true,
-      true,
       false,
-      false,
+      true,
+      true,
       true,
       false,
       false,
       false
     ]
   },
-  "hash": "ecb230280431d2663778ddb9329ff8e43d9de7f01eb8336968095a72cdef4ec1"
+  "hash": "3b38d53c86d633fa1546730b51a8925a001e126fcf2c6443d4981f5c96029520"
 }
