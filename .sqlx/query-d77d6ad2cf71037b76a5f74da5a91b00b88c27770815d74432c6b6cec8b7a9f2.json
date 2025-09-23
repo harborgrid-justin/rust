@@ -1,0 +1,26 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT action, COUNT(*) as count\n        FROM activities\n        WHERE created_at >= datetime('now', '-' || ? || ' days')\n        GROUP BY action\n        ORDER BY count DESC\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "action",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "count",
+        "ordinal": 1,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "d77d6ad2cf71037b76a5f74da5a91b00b88c27770815d74432c6b6cec8b7a9f2"
+}

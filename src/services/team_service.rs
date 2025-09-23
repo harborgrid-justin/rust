@@ -60,7 +60,7 @@ pub async fn get_team(db: &SqlitePool, id: &str) -> Result<Option<TeamResponse>>
     let row = sqlx::query!(
         r#"
         SELECT t.id, t.name, t.description, t.created_by, t.created_at, t.updated_at,
-               COUNT(tm.id) as member_count
+               COUNT(tm.id) as "member_count: i32"
         FROM teams t
         LEFT JOIN team_members tm ON t.id = tm.team_id
         WHERE t.id = ?1
@@ -89,7 +89,7 @@ pub async fn list_teams(db: &SqlitePool, user_id: &str, limit: i32, offset: i32)
     let rows = sqlx::query!(
         r#"
         SELECT DISTINCT t.id, t.name, t.description, t.created_by, t.created_at, t.updated_at,
-               COUNT(tm2.id) as member_count
+               COUNT(tm2.id) as "member_count: i32"
         FROM teams t
         INNER JOIN team_members tm ON t.id = tm.team_id AND tm.user_id = ?1
         LEFT JOIN team_members tm2 ON t.id = tm2.team_id

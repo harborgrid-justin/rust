@@ -12,11 +12,14 @@ use tower_http::{cors::CorsLayer, trace::TraceLayer};
 use tracing::info;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
+mod app_state;
 mod config;
 mod handlers;
 mod models;
 mod services;
 mod utils;
+
+use app_state::AppState;
 
 use config::Config;
 use handlers::{
@@ -46,8 +49,11 @@ async fn main() -> Result<()> {
     let db_pool = setup_database(&config.database_url).await?;
     info!("Database connection established");
 
+    // Create application state
+    let app_state = AppState::new(db_pool, config.clone());
+
     // Build application with all routes
-    let app = create_extended_app(db_pool).await;
+    let app = create_extended_app(app_state).await;
 
     // Start server
     let listener = tokio::net::TcpListener::bind(&config.server_address).await?;
@@ -81,7 +87,7 @@ async fn setup_database(database_url: &str) -> Result<SqlitePool> {
     Ok(db_pool)
 }
 
-async fn create_extended_app(db_pool: SqlitePool) -> Router {
+async fn create_extended_app(app_state: AppState) -> Router {
     Router::new()
         // Health check endpoints
         .route("/health", get(health_handlers::health_check))
@@ -191,7 +197,7 @@ async fn create_extended_app(db_pool: SqlitePool) -> Router {
                 .layer(DefaultBodyLimit::max(50 * 1024 * 1024)) // 50MB limit for file uploads
                 .layer(middleware::from_fn(request_logging_middleware))
         )
-        .with_state(db_pool)
+        .with_state(app_state)
 }
 
 async fn request_logging_middleware(

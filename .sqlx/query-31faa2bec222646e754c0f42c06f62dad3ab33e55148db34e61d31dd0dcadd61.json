@@ -1,0 +1,26 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT \n            CASE \n                WHEN mime_type LIKE 'image/%' THEN 'Image'\n                WHEN mime_type LIKE 'application/pdf' THEN 'PDF'\n                WHEN mime_type LIKE 'application/vnd.ms-%' OR mime_type LIKE 'application/vnd.openxmlformats%' THEN 'Office'\n                WHEN mime_type LIKE 'text/%' THEN 'Text'\n                ELSE 'Other'\n            END as file_type,\n            COUNT(*) as count\n        FROM documents\n        WHERE mime_type IS NOT NULL\n        GROUP BY file_type\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "file_type",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "count",
+        "ordinal": 1,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "31faa2bec222646e754c0f42c06f62dad3ab33e55148db34e61d31dd0dcadd61"
+}

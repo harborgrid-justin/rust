@@ -278,17 +278,17 @@ pub async fn update_workflow_step(
     match row {
         Some(row) => {
             let workflow = CaseWorkflow {
-                id: row.id.unwrap_or_default(),
-                case_id: row.case_id.unwrap_or_default(),
-                step_name: row.step_name.unwrap_or_default(),
-                step_order: row.step_order.unwrap_or(0),
-                status: row.status.unwrap_or_default(),
+                id: row.id,
+                case_id: row.case_id,
+                step_name: row.step_name,
+                step_order: row.step_order,
+                status: row.status,
                 assigned_to: row.assigned_to,
                 completed_by: row.completed_by,
                 completed_at: row.completed_at,
                 notes: row.notes,
-                created_at: row.created_at.unwrap_or_default(),
-                updated_at: row.updated_at.unwrap_or_default(),
+                created_at: row.created_at,
+                updated_at: row.updated_at,
             };
             Ok(Some(CaseWorkflowResponse::from(workflow)))
         }
@@ -304,6 +304,8 @@ pub async fn set_case_custom_field(
     request: SetCustomFieldRequest,
 ) -> Result<()> {
     let now = Utc::now().to_rfc3339();
+    let id = uuid::Uuid::new_v4().to_string();
+    let field_type_string = String::from(field_type);
 
     sqlx::query!(
         r#"
@@ -312,12 +314,12 @@ pub async fn set_case_custom_field(
         ON CONFLICT (case_id, field_name) 
         DO UPDATE SET field_value = ?5, updated_at = ?7
         "#,
-        uuid::Uuid::new_v4().to_string(),
+        id,
         case_id,
         field_name,
-        String::from(field_type),
+        field_type_string,
         request.field_value,
-        now.clone(),
+        now,
         now
     )
     .execute(db)
@@ -346,13 +348,13 @@ pub async fn get_case_custom_fields(
     Ok(rows
         .into_iter()
         .map(|row| CaseCustomField {
-            id: row.id.unwrap_or_default(),
-            case_id: row.case_id.unwrap_or_default(),
-            field_name: row.field_name.unwrap_or_default(),
-            field_type: row.field_type.unwrap_or_default(),
+            id: row.id,
+            case_id: row.case_id,
+            field_name: row.field_name,
+            field_type: row.field_type,
             field_value: row.field_value,
-            created_at: row.created_at.unwrap_or_default(),
-            updated_at: row.updated_at.unwrap_or_default(),
+            created_at: row.created_at,
+            updated_at: row.updated_at,
         })
         .collect())
 }

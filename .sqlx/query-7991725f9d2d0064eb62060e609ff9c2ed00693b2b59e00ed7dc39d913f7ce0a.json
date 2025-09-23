@@ -1,0 +1,20 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT workflow_steps FROM case_templates WHERE id = ?1",
+  "describe": {
+    "columns": [
+      {
+        "name": "workflow_steps",
+        "ordinal": 0,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      true
+    ]
+  },
+  "hash": "7991725f9d2d0064eb62060e609ff9c2ed00693b2b59e00ed7dc39d913f7ce0a"
+}

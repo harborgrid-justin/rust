@@ -1,0 +1,68 @@
+{
+  "db_name": "SQLite",
+  "query": "\n            SELECT id, user_id, title, message, notification_type, entity_type, entity_id, read_at, created_at\n            FROM notifications\n            WHERE user_id = ?1 AND read_at IS NULL\n            ORDER BY created_at DESC\n            LIMIT ?2 OFFSET ?3\n            ",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "user_id",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "title",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "message",
+        "ordinal": 3,
+        "type_info": "Text"
+      },
+      {
+        "name": "notification_type",
+        "ordinal": 4,
+        "type_info": "Text"
+      },
+      {
+        "name": "entity_type",
+        "ordinal": 5,
+        "type_info": "Text"
+      },
+      {
+        "name": "entity_id",
+        "ordinal": 6,
+        "type_info": "Text"
+      },
+      {
+        "name": "read_at",
+        "ordinal": 7,
+        "type_info": "Text"
+      },
+      {
+        "name": "created_at",
+        "ordinal": 8,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 3
+    },
+    "nullable": [
+      true,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false
+    ]
+  },
+  "hash": "110adb1f05b25a0bef227ef087f728c798fd5c7b18f6ee65f2c8d5b621b1c792"
+}

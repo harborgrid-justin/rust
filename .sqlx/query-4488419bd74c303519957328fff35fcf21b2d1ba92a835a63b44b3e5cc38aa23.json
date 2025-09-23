@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        UPDATE case_workflows \n        SET status = COALESCE(?1, status),\n            assigned_to = COALESCE(?2, assigned_to),\n            notes = COALESCE(?3, notes),\n            completed_by = COALESCE(?4, completed_by),\n            completed_at = COALESCE(?5, completed_at),\n            updated_at = ?6\n        WHERE id = ?7\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 7
+    },
+    "nullable": []
+  },
+  "hash": "4488419bd74c303519957328fff35fcf21b2d1ba92a835a63b44b3e5cc38aa23"
+}

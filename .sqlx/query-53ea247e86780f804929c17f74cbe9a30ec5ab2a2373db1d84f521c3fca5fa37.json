@@ -1,0 +1,56 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT tm.id, tm.user_id, tm.role, tm.added_by, tm.added_at,\n               u.username, u.full_name\n        FROM team_members tm\n        INNER JOIN users u ON tm.user_id = u.id\n        WHERE tm.team_id = ?1\n        ORDER BY tm.added_at ASC\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "user_id",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "role",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "added_by",
+        "ordinal": 3,
+        "type_info": "Text"
+      },
+      {
+        "name": "added_at",
+        "ordinal": 4,
+        "type_info": "Text"
+      },
+      {
+        "name": "username",
+        "ordinal": 5,
+        "type_info": "Text"
+      },
+      {
+        "name": "full_name",
+        "ordinal": 6,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "53ea247e86780f804929c17f74cbe9a30ec5ab2a2373db1d84f521c3fca5fa37"
+}
