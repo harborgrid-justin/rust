@@ -43,6 +43,9 @@ thiserror = "1.0"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
+# Lazy static for global state
+lazy_static = "1.4"
+
 [dev-dependencies]
 tokio-test = "0.4"
 tempfile = "3.0"
@@ -62,3 +65,7 @@ path = "src/main_final.rs"
 [[bin]]
 name = "demo-server"
 path = "src/main_demo.rs"
+
+[[bin]]
+name = "secure-server"
+path = "src/main_secure.rs"
