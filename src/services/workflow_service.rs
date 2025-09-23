@@ -232,9 +232,62 @@ pub async fn update_workflow_step(
 ) -> Result<Option<CaseWorkflowResponse>> {
     let now = Utc::now().to_rfc3339();
     
+    // Get current workflow state for validation
+    let current_workflow = sqlx::query!(
+        r#"
+        SELECT id, case_id, step_name, step_order, status, assigned_to, 
+               completed_by, completed_at, notes, created_at, updated_at
+        FROM case_workflows
+        WHERE id = ?1
+        "#,
+        workflow_id
+    )
+    .fetch_optional(db)
+    .await?;
+    
+    let current_workflow = match current_workflow {
+        Some(w) => w,
+        None => return Ok(None),
+    };
+    
+    let current_status = WorkflowStatus::from(current_workflow.status.unwrap_or_default());
+    
+    // Validate workflow state transitions
+    if let Some(new_status) = &request.status {
+        if !is_valid_workflow_transition(&current_status, new_status) {
+            info!("Invalid workflow transition from {:?} to {:?} for workflow {}", 
+                  current_status, new_status, workflow_id);
+            return Err(anyhow::anyhow!("Invalid workflow state transition"));
+        }
+        
+        // Business rule: Can't complete a step without being assigned
+        if *new_status == WorkflowStatus::Completed {
+            let assigned_to = request.assigned_to.as_ref()
+                .or(current_workflow.assigned_to.as_ref());
+                
+            if assigned_to.is_none() {
+                return Err(anyhow::anyhow!("Cannot complete workflow step without assignment"));
+            }
+        }
+        
+        // Business rule: Check prerequisites for this workflow step
+        if *new_status == WorkflowStatus::InProgress || *new_status == WorkflowStatus::Completed {
+            let prerequisite_check = check_workflow_prerequisites(
+                db, 
+                &current_workflow.case_id.unwrap_or_default(), 
+                current_workflow.step_order.unwrap_or(0)
+            ).await?;
+            
+            if !prerequisite_check {
+                return Err(anyhow::anyhow!("Prerequisite workflow steps not completed"));
+            }
+        }
+    }
+    
     let mut completed_by = None;
     let mut completed_at = None;
     
+    // Set completion fields if status is completed
     if let Some(WorkflowStatus::Completed) = request.status {
         completed_by = Some(updated_by);
         completed_at = Some(now.clone());
@@ -278,22 +331,27 @@ pub async fn update_workflow_step(
     match row {
         Some(row) => {
             let workflow = CaseWorkflow {
-                id: row.id,
-                case_id: row.case_id,
-                step_name: row.step_name,
-                step_order: row.step_order,
-                status: row.status,
+                id: row.id.unwrap_or_default(),
+                case_id: row.case_id.unwrap_or_default(),
+                step_name: row.step_name.unwrap_or_default(),
+                step_order: row.step_order.unwrap_or(0) as i32,
+                status: row.status.unwrap_or_default(),
                 assigned_to: row.assigned_to,
                 completed_by: row.completed_by,
                 completed_at: row.completed_at,
                 notes: row.notes,
-                created_at: row.created_at,
-                updated_at: row.updated_at,
+                created_at: row.created_at.unwrap_or_default(),
+                updated_at: row.updated_at.unwrap_or_default(),
             };
+            
+            // Log workflow step update for audit
+            info!("Workflow step updated: {} ({})", workflow.step_name, workflow.id);
+            
             Ok(Some(CaseWorkflowResponse::from(workflow)))
         }
         None => Ok(None),
     }
+}
 }
 
 pub async fn set_case_custom_field(
@@ -348,13 +406,63 @@ pub async fn get_case_custom_fields(
     Ok(rows
         .into_iter()
         .map(|row| CaseCustomField {
-            id: row.id,
-            case_id: row.case_id,
-            field_name: row.field_name,
-            field_type: row.field_type,
+            id: row.id.unwrap_or_default(),
+            case_id: row.case_id.unwrap_or_default(),
+            field_name: row.field_name.unwrap_or_default(),
+            field_type: row.field_type.unwrap_or_default(),
             field_value: row.field_value,
-            created_at: row.created_at,
-            updated_at: row.updated_at,
+            created_at: row.created_at.unwrap_or_default(),
+            updated_at: row.updated_at.unwrap_or_default(),
         })
         .collect())
+}
+
+// Helper functions for workflow validation
+
+/// Validates if a workflow status transition is allowed
+fn is_valid_workflow_transition(from: &WorkflowStatus, to: &WorkflowStatus) -> bool {
+    use WorkflowStatus::*;
+    
+    match (from, to) {
+        // From Pending
+        (Pending, InProgress) => true,
+        (Pending, Skipped) => true,
+        // From InProgress  
+        (InProgress, Completed) => true,
+        (InProgress, Skipped) => true,
+        (InProgress, Pending) => true, // Can go back if needed
+        // From Completed
+        (Completed, InProgress) => true, // Can reopen if needed
+        // From Skipped
+        (Skipped, Pending) => true,
+        (Skipped, InProgress) => true,
+        // Same status is always valid
+        (from, to) if from == to => true,
+        // All other transitions are invalid
+        _ => false,
+    }
+}
+
+/// Checks if prerequisite workflow steps are completed
+async fn check_workflow_prerequisites(
+    db: &SqlitePool, 
+    case_id: &str, 
+    current_step_order: i32
+) -> Result<bool> {
+    // Check if all previous steps (lower step_order) are completed or skipped
+    let incomplete_prerequisites = sqlx::query!(
+        r#"
+        SELECT COUNT(*) as count
+        FROM case_workflows
+        WHERE case_id = ?1 
+          AND step_order < ?2 
+          AND status NOT IN ('completed', 'skipped')
+        "#,
+        case_id,
+        current_step_order
+    )
+    .fetch_one(db)
+    .await?;
+    
+    Ok(incomplete_prerequisites.count == 0)
 }
