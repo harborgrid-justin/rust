@@ -6,6 +6,7 @@ pub mod team_handlers;
 pub mod notification_handlers;
 pub mod workflow_handlers;
 pub mod analytics_handlers;
+pub mod search_handlers;
 
 pub use health_handlers::*;
 pub use user_handlers::*;
@@ -15,3 +16,4 @@ pub use team_handlers::*;
 pub use notification_handlers::*;
 pub use workflow_handlers::*;
 pub use analytics_handlers::*;
+pub use search_handlers::*;
