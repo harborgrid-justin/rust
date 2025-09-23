@@ -51,6 +51,44 @@ pub async fn get_dashboard_stats(
         .map(|r| r.count.unwrap_or(0))
         .unwrap_or(0);
 
+    // Get workflow metrics
+    let completed_workflows = sqlx::query!("SELECT COUNT(*) as count FROM case_workflows WHERE status = 'completed'")
+        .fetch_one(&db)
+        .await
+        .map(|r| r.count.unwrap_or(0))
+        .unwrap_or(0);
+
+    let pending_workflows = sqlx::query!("SELECT COUNT(*) as count FROM case_workflows WHERE status = 'pending'")
+        .fetch_one(&db)
+        .await
+        .map(|r| r.count.unwrap_or(0))
+        .unwrap_or(0);
+
+    // Get recent activity (last 7 days)
+    let recent_cases = sqlx::query!(
+        "SELECT COUNT(*) as count FROM cases WHERE created_at >= datetime('now', '-7 days')"
+    )
+    .fetch_one(&db)
+    .await
+    .map(|r| r.count.unwrap_or(0))
+    .unwrap_or(0);
+
+    let recent_documents = sqlx::query!(
+        "SELECT COUNT(*) as count FROM documents WHERE created_at >= datetime('now', '-7 days')"
+    )
+    .fetch_one(&db)
+    .await
+    .map(|r| r.count.unwrap_or(0))
+    .unwrap_or(0);
+
+    // Calculate productivity metrics
+    let avg_case_resolution_time = calculate_avg_resolution_time(&db).await.unwrap_or(0.0);
+    let workflow_efficiency = if pending_workflows + completed_workflows > 0 {
+        (completed_workflows as f64 / (pending_workflows + completed_workflows) as f64) * 100.0
+    } else {
+        0.0
+    };
+
     Ok(Json(json!({
         "totals": {
             "users": user_count,
@@ -62,6 +100,19 @@ pub async fn get_dashboard_stats(
             "open": open_cases,
             "in_progress": in_progress_cases,
             "total_active": open_cases + in_progress_cases
+        },
+        "workflow_metrics": {
+            "completed_workflows": completed_workflows,
+            "pending_workflows": pending_workflows,
+            "efficiency_percentage": workflow_efficiency.round()
+        },
+        "recent_activity": {
+            "cases_last_7_days": recent_cases,
+            "documents_last_7_days": recent_documents
+        },
+        "performance_indicators": {
+            "avg_case_resolution_hours": avg_case_resolution_time,
+            "workflow_completion_rate": workflow_efficiency
         },
         "timestamp": chrono::Utc::now().to_rfc3339()
     })))
@@ -298,4 +349,20 @@ pub async fn get_system_health_metrics(
             Err(StatusCode::INTERNAL_SERVER_ERROR)
         }
     }
+}
+
+// Helper function to calculate average case resolution time
+async fn calculate_avg_resolution_time(db: &SqlitePool) -> Result<f64, sqlx::Error> {
+    let result = sqlx::query!(
+        r#"
+        SELECT 
+            AVG(julianday(updated_at) - julianday(created_at)) * 24 as avg_hours
+        FROM cases 
+        WHERE status IN ('closed', 'resolved')
+        "#
+    )
+    .fetch_one(db)
+    .await?;
+    
+    Ok(result.avg_hours.unwrap_or(0.0))
 }

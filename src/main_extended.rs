@@ -24,7 +24,7 @@ use app_state::AppState;
 use config::Config;
 use handlers::{
     analytics_handlers, case_handlers, document_handlers, health_handlers, 
-    notification_handlers, team_handlers, user_handlers, workflow_handlers,
+    notification_handlers, search_handlers, team_handlers, user_handlers, workflow_handlers,
 };
 
 #[tokio::main]
@@ -178,10 +178,9 @@ async fn create_extended_app(app_state: AppState) -> Router {
         .route("/api/analytics/system/health", get(analytics_handlers::get_system_health_metrics))
         
         // Search endpoints
-        .route("/api/search/documents", get(search_documents))
-        .route("/api/search/cases", get(search_cases))
-        .route("/api/search/users", get(search_users))
-        .route("/api/search/global", get(global_search))
+        .route("/api/search/documents", get(search_handlers::search_documents))
+        .route("/api/search/cases", get(search_handlers::search_cases))
+        .route("/api/search/global", get(search_handlers::global_search))
         
         // Import/Export endpoints
         .route("/api/export/cases", get(export_cases))
@@ -249,38 +248,6 @@ async fn api_info() -> axum::response::Json<serde_json::Value> {
 }
 
 // Placeholder implementations for additional endpoints
-async fn search_documents() -> axum::response::Json<serde_json::Value> {
-    axum::response::Json(serde_json::json!({
-        "message": "Document search endpoint",
-        "status": "implemented",
-        "note": "Full-text search across document titles, descriptions, and content"
-    }))
-}
-
-async fn search_cases() -> axum::response::Json<serde_json::Value> {
-    axum::response::Json(serde_json::json!({
-        "message": "Case search endpoint",
-        "status": "implemented",
-        "note": "Search cases by title, description, status, priority, and custom fields"
-    }))
-}
-
-async fn search_users() -> axum::response::Json<serde_json::Value> {
-    axum::response::Json(serde_json::json!({
-        "message": "User search endpoint",
-        "status": "implemented",
-        "note": "Search users by username, email, full name, and role"
-    }))
-}
-
-async fn global_search() -> axum::response::Json<serde_json::Value> {
-    axum::response::Json(serde_json::json!({
-        "message": "Global search endpoint",
-        "status": "implemented",
-        "note": "Search across all entities: users, documents, cases, teams"
-    }))
-}
-
 async fn export_cases() -> axum::response::Json<serde_json::Value> {
     axum::response::Json(serde_json::json!({
         "message": "Case export endpoint",

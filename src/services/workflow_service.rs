@@ -352,7 +352,6 @@ pub async fn update_workflow_step(
         None => Ok(None),
     }
 }
-}
 
 pub async fn set_case_custom_field(
     db: &SqlitePool,
